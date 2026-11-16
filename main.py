@@ -3,10 +3,12 @@ from fastapi import FastAPI
 from database import engine, Base
 import models.user
 from routers.user import router as user_router
+from routers.todo import router as todo_router
 
 app = FastAPI()
 
 app.include_router(user_router)
+app.include_router(todo_router)
 
 @app.get("/")
 async def root():
