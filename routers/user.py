@@ -57,8 +57,8 @@ async def info(current_user:User = Depends(get_current_user)):
 async def update_pwd(pwd:UpdatePassword,
                      db: AsyncSession = Depends(get_db),
                      user: User = Depends(get_current_user)):
-    user = await update_pwd_crud(db,user.id,pwd.old_password,pwd.new_password)
-    if user is None:
+    ok = await update_pwd_crud(db,user.id,pwd.old_password,pwd.new_password)
+    if not ok:
         raise HTTPException(status_code=400, detail="旧密码错误")
     return CommonResponse(
             code=200,

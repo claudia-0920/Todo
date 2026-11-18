@@ -54,7 +54,7 @@ async def get_user_by_token(db:AsyncSession,token:str):
 async def update_pwd_crud(db:AsyncSession,user_id:int,old_password:str,new_password:str):
     stmt = select(User).where(User.id == user_id)
     result = await db.execute(stmt)
-    user = result.scalar_one()
+    user = result.scalar_one_or_none()
     # if not user:
     #     return None
     match = verify_password(old_password,user.password)
