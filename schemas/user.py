@@ -13,3 +13,7 @@ class UserResponse(BaseModel):
     token: str
     user_info: UserInfo
 
+class UpdatePassword(BaseModel):
+    old_password: str
+    new_password: str
+

@@ -60,3 +60,4 @@ async def delete_todo_crud(db:AsyncSession,todo_id:int,user_id:int):
     await db.delete(todo)
     await db.commit()
     return True
+

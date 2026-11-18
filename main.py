@@ -1,7 +1,8 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI,HTTPException
 from database import engine, Base
 import models.user
+from exceptions import http_exception_handler
 from routers.user import router as user_router
 from routers.todo import router as todo_router
 
@@ -9,6 +10,7 @@ app = FastAPI()
 
 app.include_router(user_router)
 app.include_router(todo_router)
+app.add_exception_handler(HTTPException,http_exception_handler)
 
 @app.get("/")
 async def root():

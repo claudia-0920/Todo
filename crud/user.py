@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
-
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User, UserToken
 from utils.security import get_hash_password, verify_password
@@ -50,5 +49,25 @@ async def get_user_by_token(db:AsyncSession,token:str):
     stmt_user = select(User).where(User.id== db_token.user_id)
     result_user = await db.execute(stmt_user)
     return result_user.scalar_one_or_none()
+
+# 修改密码
+async def update_pwd_crud(db:AsyncSession,user_id:int,old_password:str,new_password:str):
+    stmt = select(User).where(User.id == user_id)
+    result = await db.execute(stmt)
+    user = result.scalar_one()
+    # if not user:
+    #     return None
+    match = verify_password(old_password,user.password)
+    if not match:
+        return None
+    new_pwd = get_hash_password(new_password)
+    result = update(User).where(User.id == user_id).values(password=new_pwd)
+    await db.execute(result)
+    stmt = delete(UserToken).where(UserToken.user_id == user_id)
+    await db.execute(stmt)
+    await db.commit()
+    await db.refresh(user)
+    return True
+    
 
 

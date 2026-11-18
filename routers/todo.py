@@ -4,6 +4,7 @@ from crud.todo import (create_todo_crud,
                        get_todo_list, get_todo_by_id, update_todo_crud, delete_todo_crud)
 from database import get_db
 from models.user import User
+from schemas.common import CommonResponse
 from schemas.todo import TodoResponse, TodoUpdate, TodoCreate
 from utils.auth import get_current_user
 
@@ -15,10 +16,11 @@ async def create_todo(todo_info:TodoCreate,
                         user: User = Depends(get_current_user),
 ):
     data = await create_todo_crud(db,user.id,todo_info.title,todo_info.description)
-    return {
-        "code":200,
-        "msg":"success",
-        "data":TodoResponse.model_validate(data)}
+    return CommonResponse(
+        code=200,
+        msg="success",
+        data=TodoResponse.model_validate(data))
+
 
 @router.get('/get_todos')
 async def get_todos(
@@ -29,14 +31,13 @@ async def get_todos(
                     user: User = Depends(get_current_user)):
     todo_list, count, total = await get_todo_list(db,user.id,page,page_size,completed)
     items = [TodoResponse.model_validate(item) for item in todo_list]
-    return {
-        "code":200,
-        "msg":"success",
-        "data":{
+    return CommonResponse(
+        code=200,
+        msg="success",
+        data={
             "items":items,
             "count":count,
-            "total":total}
-    }
+            "total":total})
 
 @router.get('/get_details')
 async def get_todo_details(todo_id:int,
@@ -45,10 +46,10 @@ async def get_todo_details(todo_id:int,
     data = await get_todo_by_id(db,todo_id,user.id)
     if data is None:
         raise HTTPException(status_code=404,detail="无此todo")
-    return {
-        "code": 200,
-        "msg": "success",
-        "data": TodoResponse.model_validate(data)}
+    return CommonResponse(
+            code=200,
+            msg="success",
+            data=TodoResponse.model_validate(data))
 
 @router.put('/update_todo')
 async def update_todo(todo_id:int,
@@ -58,10 +59,10 @@ async def update_todo(todo_id:int,
     data = await update_todo_crud(db,todo_id,todo_data,user.id)
     if data is None:
         raise HTTPException(status_code=404,detail="无此todo")
-    return {
-            "code": 200,
-            "msg": "success",
-            "data": TodoResponse.model_validate(data)}
+    return CommonResponse(
+        code=200,
+        msg="success",
+        data=TodoResponse.model_validate(data))
 
 @router.delete('/delete_todo')
 async def delete_todo(todo_id:int,
@@ -70,8 +71,8 @@ async def delete_todo(todo_id:int,
     data = await delete_todo_crud(db,todo_id,user.id)
     if data is None:
         raise HTTPException(status_code=404, detail="无此todo")
-    return {
-        "code": 200,
-        "msg": "success"
-        }
+    return CommonResponse(
+        code=200,
+        msg="删除成功",
+        )
 

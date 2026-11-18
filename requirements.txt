@@ -3,4 +3,5 @@ uvicorn[standard]
 sqlalchemy
 aiomysql
 passlib[bcrypt]
-python-multipart
+python-dotenv
+pydantic
