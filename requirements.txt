@@ -5,3 +5,4 @@ aiomysql
 passlib[bcrypt]
 python-dotenv
 pydantic
+cryptography==50.0.2
